@@ -1,0 +1,25 @@
+{
+  "name": "vsco",
+  "version": "1.0.0",
+  "description": "Scripts to support mulitiplatform Visual Studio Code use",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwpeters/vsco.git"
+  },
+  "keywords": [
+    "vscode"
+  ],
+  "author": "Kevin Peters <kwpeters@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kwpeters/vsco/issues"
+  },
+  "homepage": "https://github.com/kwpeters/vsco#readme",
+  "devDependencies": {
+    "@types/node": "^10.17.5"
+  }
+}
