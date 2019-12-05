@@ -18,11 +18,6 @@ export function builder(argv: Argv): Argv
         )
         .check(
             (argv: Arguments) => {
-
-                console.log("---");
-                console.log(argv);
-                console.log("---");
-
                 const backupSettingsDir = new Directory(argv.settingsRepoDir);
 
                 if (!backupSettingsDir) {
