@@ -20,6 +20,16 @@
   },
   "homepage": "https://github.com/kwpeters/vsco#readme",
   "devDependencies": {
-    "@types/node": "^10.17.5"
+    "@types/bluebird": "3.5.29",
+    "@types/lodash": "4.14.149",
+    "@types/node": "10.17.5",
+    "@types/yargs": "12.0.1"
+  },
+  "dependencies": {
+    "bluebird": "3.5.5",
+    "lodash": "4.14.2",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3",
+    "yargs": "12.0.2"
   }
 }
