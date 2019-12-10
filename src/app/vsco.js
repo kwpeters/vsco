@@ -1,9 +1,13 @@
+// Allow use of TS files
+require('ts-node').register();
 
-require('ts-node').register();   // Allow use of TS files
 
 const yargs = require("yargs");
 const commandBackupSettings = require("./backupSettings");
+const commandRestoreSettings = require("./restoreSettings");
+
 
 yargs
-.command(commandBackupSettings)
-.help().argv;    // tslint:disable-line:no-unused-expression
+    .command(commandBackupSettings)
+    .command(commandRestoreSettings)
+    .help().argv;    // tslint:disable-line:no-unused-expression

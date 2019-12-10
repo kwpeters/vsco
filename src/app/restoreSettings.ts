@@ -4,8 +4,8 @@ import { Argv, Arguments } from "yargs";
 import { Directory } from "../depot/directory";
 import { getSettingsFiles } from "./settingsFiles";
 
-export const command = "backup-settings <settingsRepoDir>";
-export const describe = "Backs up VSCode setting to the specified settings repository.";
+export const command = "restore-settings <settingsRepoDir>";
+export const describe = "Restores VSCode setting from the specified settings repository.";
 
 
 export function builder(argv: Argv): Argv {
@@ -39,8 +39,8 @@ export async function handler(args: Arguments): Promise<void> {
     console.log(`Settings files: ${settingsFiles.length}`);
 
     const promises = _.map(settingsFiles, curSettingsFile => {
-        console.log(`Copying ${curSettingsFile.vscodeFile.toString()} to ${curSettingsFile.backupFile.toString()}.`);
-        return curSettingsFile.vscodeFile.copy(curSettingsFile.backupFile);
+        console.log(`Copying ${curSettingsFile.backupFile.toString()} to ${curSettingsFile.vscodeFile.toString()}.`);
+        return curSettingsFile.backupFile.copy(curSettingsFile.vscodeFile);
     });
 
     return BBPromise.all(promises)

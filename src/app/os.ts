@@ -19,10 +19,14 @@ export enum OperatingSystem
  */
 export function getOs(): OperatingSystem
 {
-    if (os.platform().startsWith("win")) {
+    const platform = os.platform();
+
+    if (platform.startsWith("win")) {
         return OperatingSystem.WINDOWS;
     }
-    // TODO: Add a check of OS X here.
+    else if (platform === "darwin") {
+        return OperatingSystem.MAC;
+    }
     else {
         return OperatingSystem.UNKNOWN;
     }
