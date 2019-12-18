@@ -13,8 +13,8 @@ const homeToVscodeSettingsMac     = ["Library", "Application Support", "Code", "
 
 
 export const filePathIgnoreRegExps = [
-    /^globalStorage\//,
-    /^workspaceStorage\//
+    /^globalStorage[\/\\]/,
+    /^workspaceStorage[\/\\]/
 ];
 
 
