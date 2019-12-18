@@ -2,11 +2,17 @@ import * as _ from "lodash";
 import * as BBPromise from "bluebird";
 import { Argv, Arguments } from "yargs";
 import { Directory } from "../depot/directory";
-import { getSettingsFiles } from "./settingsFiles";
+import { diffDirectories, ActionPriority } from "../depot/diffDirectories";
+import { promptToContinue } from "../depot/prompts";
+import { getVscodeSettingsDir, getBackupDir, filePathIgnoreRegExps, diffDirFileItemRepresentation } from "./util";
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Command Configuration
 
 export const command = "restore-settings <settingsRepoDir>";
-export const describe = "Restores VSCode setting from the specified settings repository.";
 
+export const describe = "Restores VSCode setting from the specified settings repository.";
 
 export function builder(argv: Argv): Argv {
     return argv
@@ -23,7 +29,9 @@ export function builder(argv: Argv): Argv {
                 const backupSettingsDir = new Directory(argv.settingsRepoDir);
 
                 if (!backupSettingsDir.existsSync()) {
-                    throw new Error(`The setting repo directory "${backupSettingsDir.toString()}" does not exist.`);
+                    const msg = `The setting repo directory "${backupSettingsDir.toString()}" does not exist.`;
+                    console.error(msg);
+                    throw new Error(msg);
                 }
 
                 // If we got this far, everything is ok.
@@ -35,14 +43,47 @@ export function builder(argv: Argv): Argv {
 
 
 export async function handler(args: Arguments): Promise<void> {
-    const settingsFiles = await getSettingsFiles(args.settingsRepoDir);
-    console.log(`Settings files: ${settingsFiles.length}`);
+    const vscodeSettingsDir = getVscodeSettingsDir();
+    const backupDir = getBackupDir(args.settingsRepoDir);
 
-    const promises = _.map(settingsFiles, curSettingsFile => {
-        console.log(`Copying ${curSettingsFile.backupFile.toString()} to ${curSettingsFile.vscodeFile.toString()}.`);
-        return curSettingsFile.backupFile.copy(curSettingsFile.vscodeFile);
+    const diffDirItems = await diffDirectories(
+        vscodeSettingsDir,
+        backupDir,
+        ActionPriority.R_TO_L,
+        false      // Don't include identical files in results
+    );
+
+    // Remove any file differences related to ignored files.
+    _.remove(diffDirItems, (curDiffDirItem) => {
+        const curRelativeFilePath = curDiffDirItem.relativeFilePath;
+
+        return _.some(filePathIgnoreRegExps, (curIgnoreRegExp: RegExp) => {
+            return curIgnoreRegExp.test(curRelativeFilePath);
+        });
     });
 
-    return BBPromise.all(promises)
-        .then(() => { });
+    if (diffDirItems.length === 0) {
+        console.log("All settings are up-to-date.");
+    }
+    else {
+        // Print each file and its default action that will be performed.
+        _.forEach(diffDirItems, (curDiffDirItem) => {
+            console.log(diffDirFileItemRepresentation(curDiffDirItem, 0));
+        });
+
+        try {
+            await promptToContinue(`Perform the ${diffDirItems.length} actions?`, false, 0);
+
+            // Perform the default action for each file.
+            // Note: We do not have to worry about `actions` being a 0-length array
+            // because we chose not to include identical files in the results.
+            const promises = _.map(diffDirItems, (curDiffDirItem) => {
+                return curDiffDirItem.actions[0].execute();
+            });
+
+            await BBPromise.all(promises);
+        }
+        catch {
+        }
+    }
 }

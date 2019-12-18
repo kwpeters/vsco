@@ -8,6 +8,6 @@ const commandRestoreSettings = require("./restoreSettings");
 
 
 yargs
-    .command(commandBackupSettings)
-    .command(commandRestoreSettings)
-    .help().argv;    // tslint:disable-line:no-unused-expression
+.command(commandBackupSettings)
+.command(commandRestoreSettings)
+.help().argv;    // tslint:disable-line:no-unused-expression
