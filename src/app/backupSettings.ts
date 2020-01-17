@@ -96,5 +96,5 @@ export async function handler(args: Arguments): Promise<void>
         .value();
 
     const extensionsFile = getExtensionsBackupFile(new Directory(args.settingsRepoDir));
-    extensionsFile.writeJson({extensions: extensionNames});
+    extensionsFile.writeJsonSync({extensions: extensionNames});
 }
