@@ -4,7 +4,14 @@ import { Argv, Arguments } from "yargs";
 import { Directory } from "../depot/directory";
 import { diffDirectories, ActionPriority } from "../depot/diffDirectories";
 import { promptToContinue } from "../depot/prompts";
-import { getVscodeSettingsDir, getBackupDir, filePathIgnoreRegExps, diffDirFileItemRepresentation } from "./util";
+import {
+    getVscodeSettingsDir,
+    getBackupDir,
+    filePathIgnoreRegExps,
+    diffDirFileItemRepresentation,
+    getExtensionsDir,
+    getExtensionsBackupFile
+} from "./util";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,4 +93,34 @@ export async function handler(args: Arguments): Promise<void> {
         catch {
         }
     }
+
+
+    const vscodeExtensionsDir = getExtensionsDir();
+    const extensionsContents = vscodeExtensionsDir.contentsSync(false);
+    const installedExtensions = _.chain(extensionsContents.subdirs)
+    .map((curSubDir) => curSubDir.dirName)
+    .sort()
+    .value();
+
+    const extensionsFile = getExtensionsBackupFile(new Directory(args.settingsRepoDir));
+    const backupExtensions: Array<string> = (extensionsFile.readJsonSync() as any).extensions;
+
+    const needToInstall = _.difference(backupExtensions, installedExtensions);
+    if (needToInstall.length === 0) {
+        console.log("You have all extensions installed.");
+    }
+    else {
+        console.log("You need to install the following extension:");
+        console.log(needToInstall.join("\n"));
+    }
+
+    const extraExtensions = _.difference(installedExtensions, backupExtensions);
+    if (extraExtensions.length === 0) {
+        console.log("You don't have any extra extensions installed.");
+    }
+    else {
+        console.log("You have the following extra extensions installed:");
+        console.log(extraExtensions.join("\n"));
+    }
+
 }
