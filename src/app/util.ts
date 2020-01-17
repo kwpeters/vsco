@@ -8,16 +8,28 @@ const os = getOs();
 const homeDir = getHomeDir();
 
 
+/**
+ * The path from the user's home directory to their vscode settings directory.
+ */
 const homeToVscodeSettingsWindows = ["AppData", "Roaming", "Code", "User"];
 const homeToVscodeSettingsMac     = ["Library", "Application Support", "Code", "User"];
 
 
+/**
+ * Directories and files that should always be ignored when processing the
+ * user's vscode settings directory.
+ */
 export const filePathIgnoreRegExps = [
     /^globalStorage[\/\\]/,
     /^workspaceStorage[\/\\]/
 ];
 
 
+/**
+ * Figures out where the user's vscode settings are stored, accounting for the
+ * current OS.
+ * @return The diretory where the user's vscode settings are stored
+ */
 export function getVscodeSettingsDir(): Directory
 {
     if (os === OperatingSystem.WINDOWS) {
@@ -32,7 +44,15 @@ export function getVscodeSettingsDir(): Directory
 }
 
 
-export function getBackupDir(settingsRepoDir: Directory): Directory
+/**
+ * Figures out the backup .../Code/User directory location given the backup
+ * repo directory and accounting for the current OS.
+ * @param settingsRepoDir - The directory containing backed up settings.
+ * @return The backup directory corresponding to the .../Code/User directory.
+ */
+export function getBackupDir(
+    settingsRepoDir: Directory
+): Directory
 {
     if (os === OperatingSystem.WINDOWS) {
         return new Directory(settingsRepoDir, "windows", "home", ...homeToVscodeSettingsWindows);
@@ -46,7 +66,17 @@ export function getBackupDir(settingsRepoDir: Directory): Directory
 }
 
 
-export function diffDirFileItemRepresentation(fileItem: DiffDirFileItem, actionIndex: number): string
+/**
+ * Creates a textual representation of the specified DiffDirFileItem for the
+ * specified action.
+ * @param fileItem - The DiffDirFileItem to render
+ * @param actionIndex - The index of `fileItem` to render
+ * @return The textual representation
+ */
+export function diffDirFileItemRepresentation(
+    fileItem: DiffDirFileItem,
+    actionIndex: number
+): string
 {
     if (fileItem.actions.length === 0) {
         // The files must be identical.
@@ -109,32 +139,3 @@ export function diffDirFileItemRepresentation(fileItem: DiffDirFileItem, actionI
 
     }
 }
-
-
-// export function getActionSeparator(action: DiffDirFileItemActionType)
-// {
-//     switch (key) {
-//         case DiffDirFileItemActionType.COPY_LEFT:
-//             return " <-- ";
-
-//         case DiffDirFileItemActionType.COPY_RIGHT:
-//             return " --> ";
-
-
-//         case DiffDirFileItemActionType.DELETE_LEFT:
-//             return "❌    ";
-
-//         case DiffDirFileItemActionType.DELETE_RIGHT:
-//             return "    ❌";
-//             break;
-
-//         case DiffDirFileItemActionType.DELETE_BOTH:
-//             return "❌   ❌";
-
-//         case DiffDirFileItemActionType.SKIP:
-//             return "     ";
-
-//         default:
-//             break;
-//     }
-// }
