@@ -94,7 +94,7 @@ export function diffDirFileItemRepresentation(
         const actionType = fileItem.actions[actionIndex].type;
 
         if (actionType === DiffDirFileItemActionType.COPY_LEFT) {
-            const sep = " <-- ";
+            const sep = " ⬅️ ";
             const leftStr = fileItem.isRightOnly ?
                 new File(fileItem.leftRootDir, fileItem.relativeFilePath).directory.toString() :
                 new File(fileItem.leftRootDir, fileItem.relativeFilePath).toString();
@@ -102,7 +102,7 @@ export function diffDirFileItemRepresentation(
             return leftStr + sep + rightStr;
         }
         else if (actionType === DiffDirFileItemActionType.COPY_RIGHT) {
-            const sep = " --> ";
+            const sep = " ➡️ ";
             const leftStr = fileItem.leftFile!.toString();
             const rightStr = fileItem.isLeftOnly ?
                 new File(fileItem.rightRootDir, fileItem.relativeFilePath).directory.toString() :
@@ -128,7 +128,7 @@ export function diffDirFileItemRepresentation(
             return leftStr + sep + rightStr;
         }
         else if (actionType === DiffDirFileItemActionType.SKIP) {
-            const sep = "     ";
+            const sep = "  ⏭  ";
             const leftStr = fileItem.leftFile ? fileItem.leftFile!.toString() : "";
             const rightStr = fileItem.rightFile ? fileItem.rightFile!.toString() : "";
             return leftStr + sep + rightStr;
