@@ -45,6 +45,36 @@ export function getVscodeSettingsDir(): Directory
 
 
 /**
+ * The path from the user's home directory to where vscode installs extensions.
+ */
+const homeToVscodeExtensions = [".vscode", "extensions"];
+
+
+/**
+ * Gets the directory where extensions are installed (for the current user)
+ * @return The extensions directory
+ */
+export function getExtensionsDir(): Directory
+{
+    const extensionsDir = new Directory(homeDir, ...homeToVscodeExtensions);
+    return extensionsDir;
+}
+
+
+/**
+ * Gets the backup file used to record vscode extensions.
+ * @param settingsRepoDir The directory containing backed up settings
+ */
+export function getExtensionsBackupFile(
+    settingsRepoDir: Directory
+): File
+{
+    const extensionsFile = new File(settingsRepoDir, "extensions.json");
+    return extensionsFile;
+}
+
+
+/**
  * Figures out the backup .../Code/User directory location given the backup
  * repo directory and accounting for the current OS.
  * @param settingsRepoDir - The directory containing backed up settings.

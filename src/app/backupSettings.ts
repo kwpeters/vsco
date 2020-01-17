@@ -4,7 +4,7 @@ import { Argv, Arguments } from "yargs";
 import { Directory } from "../depot/directory";
 import { diffDirectories, ActionPriority } from "../depot/diffDirectories";
 import { promptToContinue } from "../depot/prompts";
-import { getVscodeSettingsDir, getBackupDir, filePathIgnoreRegExps, diffDirFileItemRepresentation } from "./util";
+import { getVscodeSettingsDir, getBackupDir, filePathIgnoreRegExps, diffDirFileItemRepresentation, getExtensionsBackupFile, getExtensionsDir } from "./util";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,4 +87,14 @@ export async function handler(args: Arguments): Promise<void>
         catch {
         }
     }
+
+    const vscodeExtensionsDir = getExtensionsDir();
+    const extensionsContents = vscodeExtensionsDir.contentsSync(false);
+    const extensionNames: Array<string> = _.chain(extensionsContents.subdirs)
+        .map((curSubdir) => curSubdir.dirName)
+        .sort()
+        .value();
+
+    const extensionsFile = getExtensionsBackupFile(new Directory(args.settingsRepoDir));
+    extensionsFile.writeJson({extensions: extensionNames});
 }
